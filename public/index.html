@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fit Check — Resume vs. Job Match</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <div class="mark">FC</div>
+    <div class="masthead-text">
+      <h1>Fit Check</h1>
+      <p>Read a resume against a role the way a hiring manager would.</p>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="match">Match</button>
+    <button class="tab-btn" data-tab="cover-letter">Cover Letter</button>
+    <button class="tab-btn" data-tab="templates">Templates</button>
+    <button class="tab-btn" data-tab="archive">Archive</button>
+  </nav>
+
+  <!-- ============== MATCH TAB ============== -->
+  <main id="tab-match" class="tab-panel">
+    <section class="inputs">
+      <div class="input-col">
+        <div class="col-label"><span class="col-index">01</span><span>Resume</span></div>
+        <textarea id="resumeText" placeholder="Paste resume text here…"></textarea>
+        <label class="file-row">
+          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" />
+          <span>or upload .pdf / .docx</span>
+        </label>
+      </div>
+
+      <div class="input-col">
+        <div class="col-label"><span class="col-index">02</span><span>Job description</span></div>
+        <textarea id="jdText" placeholder="Paste the job description here…"></textarea>
+        <label class="file-row">
+          <input type="file" id="jdFile" accept=".pdf,.docx,.txt" />
+          <span>or upload .pdf / .docx</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="run-row">
+      <button id="runBtn">Run the match</button>
+      <span id="statusMsg" class="status"></span>
+    </div>
+
+    <section id="results" class="results hidden">
+
+      <div class="score-block">
+        <div class="score-number"><span id="scoreValue">—</span><span class="score-unit">/100</span></div>
+        <div class="score-meter"><div id="scoreFill" class="score-fill"></div></div>
+        <p id="scoreSummary" class="score-summary"></p>
+      </div>
+
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Where it lines up</h3>
+          <ul id="strengthsList"></ul>
+        </div>
+        <div class="report-card">
+          <h3>Where it falls short</h3>
+          <ul id="gapsList"></ul>
+        </div>
+      </div>
+
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Keywords matched</h3>
+          <div id="keywordMatches" class="chip-row"></div>
+        </div>
+        <div class="report-card">
+          <h3>Keywords missing</h3>
+          <div id="keywordMissing" class="chip-row"></div>
+        </div>
+      </div>
+
+      <div class="report-card wide">
+        <h3>Suggested edits</h3>
+        <table id="editsTable"><tbody></tbody></table>
+        <div class="apply-row">
+          <button id="applyEditsBtn">Apply these edits to my resume</button>
+          <span id="applyStatus" class="status"></span>
+        </div>
+      </div>
+
+      <div class="report-card wide ats">
+        <h3>ATS risk: <span id="atsRisk"></span></h3>
+        <p id="atsNotes"></p>
+      </div>
+
+      <div id="revisedBlock" class="report-card wide hidden">
+        <h3>Revised resume</h3>
+        <textarea id="revisedText" class="revised-textarea"></textarea>
+        <div class="export-row">
+          <button id="exportDocxBtn">Download .docx</button>
+          <button id="exportPdfBtn">Download .pdf</button>
+          <span class="template-indicator">Template: <strong id="activeTemplateLabel">Classic</strong> — <a href="#" id="changeTemplateLink">change</a></span>
+        </div>
+        <div class="recheck-row">
+          <button id="recheckBtn">Re-check match score</button>
+          <span id="recheckStatus" class="status"></span>
+        </div>
+        <div id="recheckResult" class="recheck-result hidden"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ============== COVER LETTER TAB ============== -->
+  <main id="tab-cover-letter" class="tab-panel hidden">
+    <p class="templates-intro">Uses your revised resume from the Match tab if you've applied edits, otherwise the original you matched. Run a match first if this is empty.</p>
+
+    <div class="input-col">
+      <div class="col-label"><span class="col-index">✦</span><span>Anything specific to mention? (optional)</span></div>
+      <textarea id="coverNotes" placeholder="e.g. a referral, a specific project you want highlighted, why this company…" style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="run-row">
+      <button id="generateCoverBtn">Generate cover letter</button>
+      <span id="coverStatus" class="status"></span>
+    </div>
+
+    <div id="coverBlock" class="report-card wide hidden">
+      <h3>Cover letter</h3>
+      <textarea id="coverLetterText" class="revised-textarea"></textarea>
+      <div class="export-row">
+        <button id="exportCoverDocxBtn">Download .docx</button>
+        <button id="exportCoverPdfBtn">Download .pdf</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============== TEMPLATES TAB ============== -->
+  <main id="tab-templates" class="tab-panel hidden">
+    <p class="templates-intro">Pick the look your exported resume will use. Your revised content stays the same — only the layout changes. All three are black-and-white and ATS-safe: single column, no tables or graphics, standard section headings.</p>
+    <div id="templateCards" class="template-cards"></div>
+  </main>
+
+  <!-- ============== ARCHIVE TAB ============== -->
+  <main id="tab-archive" class="tab-panel hidden">
+    <div id="archiveEmpty" class="archive-empty hidden">No matches run yet — results are saved here automatically.</div>
+    <div id="archiveList" class="archive-list"></div>
+
+    <div id="archiveDetail" class="report-card wide hidden">
+      <button id="archiveBack" class="back-btn">&larr; Back to list</button>
+      <div id="archiveDetailBody"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Runs on Claude. Archive is stored locally on this machine only.</p>
+  </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
